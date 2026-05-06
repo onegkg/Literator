@@ -114,7 +114,6 @@ func linkOne(slice []types.NodeOne) *types.LinkedNodeOne {
 			prev = newNode
 		}
 	}
-
 	return head
 }
 

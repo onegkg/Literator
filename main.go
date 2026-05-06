@@ -9,9 +9,6 @@ import (
 )
 
 func main() {
-	// get input
-	// preprocess
-	// Convert to IR
 	// Transliterate
 	path := filepath.Join("test.txt")
 	dat, err := os.ReadFile(path)
@@ -21,9 +18,11 @@ func main() {
 	}
 	processed := literator.Preprocess(string(dat))
 	irOne := literator.ConvertToIROne(processed)
-	irString := irOne.StringFromHead()
-	fmt.Printf("%v\n", irOne.DebugPrint())
-	fmt.Printf("%s", irString)
-
-	fmt.Printf("\n")
+	irTwo, err := literator.ConvertToIRTwo(irOne)
+	if err != nil {
+		fmt.Printf("Error converting to IR2: %w\n", err)
+		os.Exit(1)
+	}
+	irString := irTwo.StringFromHead()
+	fmt.Printf("%s\n", irString)
 }

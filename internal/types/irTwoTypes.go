@@ -2,6 +2,7 @@ package types
 
 import (
 	"fmt"
+	"strings"
 
 	"golang.org/x/text/unicode/runenames"
 )
@@ -14,6 +15,32 @@ type LinkedNodeTwo struct {
 	Node NodeTwo
 	Next *LinkedNodeTwo
 	Prev *LinkedNodeTwo
+}
+
+func (ln2 *LinkedNodeTwo) StringFromHead() string {
+	var sb strings.Builder
+	curr := ln2
+	first := true
+	fmt.Fprintf(&sb, "[")
+	for curr != nil {
+		if first {
+			fmt.Fprintf(&sb, "%v", curr)
+			first = false
+		} else {
+			fmt.Fprintf(&sb, ", %v", curr)
+		}
+		curr = curr.Next
+	}
+	fmt.Fprint(&sb, "]")
+	return sb.String()
+}
+
+func (ln2 *LinkedNodeTwo) String() string {
+	return fmt.Sprintf("LN2{ %v }", ln2.Node)
+}
+
+func (ln2 *LinkedNodeTwo) DebugString() string {
+	return fmt.Sprintf("LN2{ Node: %v, Next: %v, Prev: %v}", ln2.Node, ln2.Next, ln2.Prev)
 }
 
 type EdgeCase int

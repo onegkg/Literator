@@ -19,10 +19,15 @@ func ConvertToIRTwo(irOne *types.LinkedNodeOne) (*types.LinkedNodeTwo, error) {
 			currNode := types.PuncNodeTwo{Punc: typedNode.Punc}
 			slice = append(slice, &currNode)
 		case *types.GraphemeNodeOne:
-			currNode, err := newGraphemeNodeTwo(currNodeOne)
+			currNode, skip, err := newGraphemeNodeTwo(currNodeOne)
 			if err != nil {
 				return nil, err
 			}
+
+			if skip {
+				currNodeOne = currNodeOne.Next
+			}
+
 			slice = append(slice, &currNode)
 		default:
 			panic("unexpected NodeOne type in ConvertToIRTwo")
@@ -33,22 +38,53 @@ func ConvertToIRTwo(irOne *types.LinkedNodeOne) (*types.LinkedNodeTwo, error) {
 	return linked, nil
 }
 
-func newGraphemeNodeTwo(node *types.LinkedNodeOne) (types.GraphemeNodeTwo, error) {
+func newGraphemeNodeTwo(node *types.LinkedNodeOne) (types.GraphemeNodeTwo, bool, error) {
 	internalGrapheme, ok := node.Node.(*types.GraphemeNodeOne)
 	if !ok {
-		return types.GraphemeNodeTwo{}, fmt.Errorf("NOT A GRAPHEME NODE!")
+		return types.GraphemeNodeTwo{}, false, fmt.Errorf("NOT A GRAPHEME NODE!")
 	}
 
 	letter, err := getLetter(*internalGrapheme)
 	if err != nil {
-		return types.GraphemeNodeTwo{}, err
+		return types.GraphemeNodeTwo{}, false, err
 	}
-	letter = letter
-	panic("")
+
+	vowel, skip := getVowel(node)
+
+	ec, err := getEdgeCase(node)
+	if err != nil {
+		return types.GraphemeNodeTwo{}, false, err
+	}
+
+	return types.GraphemeNodeTwo{
+		Letter:   letter,
+		Dagesh:   internalGrapheme.Dagesh,
+		Vowel:    vowel,
+		EdgeCase: ec,
+	}, skip, nil
 }
 
 func linkTwo(slice []types.NodeTwo) *types.LinkedNodeTwo {
-	panic("Not yet implemented")
+	var head *types.LinkedNodeTwo
+	var prev *types.LinkedNodeTwo
+
+	for i, node := range slice {
+		if i == 0 {
+			head = &types.LinkedNodeTwo{
+				Node: node,
+				Prev: nil,
+			}
+			prev = head
+		} else {
+			newNode := &types.LinkedNodeTwo{
+				Node: node,
+				Prev: prev,
+			}
+			prev.Next = newNode
+			prev = newNode
+		}
+	}
+	return head
 }
 
 func getLetter(node types.GraphemeNodeOne) (types.LetterTwo, error) {
@@ -130,19 +166,42 @@ func getLetterBegadkefat(letter types.Letter, dagesh bool) types.LetterTwo {
 			return types.LetterTwoSaf
 		}
 	default:
+		// Sofiyot are handled in getLetterFinal
 		panic("getLetterBegadkefat() failed")
 	}
 }
 
-// func getVowel(node types.GraphemeNodeOne) (types.VowelTwo, error) {
-// 	chirikMaleh := node.IsChirikMaleh
-// 	vowel := node.Vowel
-// 	if chirikMaleh {
-// 		return types.VowelTwoChirikMale, nil
-// 	}
-// 	switch vowel {
-// 		case types.CHOLOM:
-// 			if
-// 	}
+func getVowel(linkedNode *types.LinkedNodeOne) (vowel types.VowelTwo, skipNext bool) {
+	node := linkedNode.Node.(*types.GraphemeNodeOne)
+	chirikMaleh := node.IsChirikMaleh
+	oldVowel := node.Vowel
+	// This should probably be handled here but I've already implemented it and idc enough to change it now
+	if chirikMaleh {
+		return types.VowelTwoChirikMale, false
+	}
 
-// }
+	if oldVowel == types.VowelNone {
+		next := linkedNode.Next.Node
+		switch typedNext := next.(type) {
+		case *types.SpaceNodeOne:
+		case *types.PuncNodeOne:
+		case *types.GraphemeNodeOne:
+			if typedNext.Letter == types.VAV {
+				if typedNext.Vowel == types.CHOLOM {
+					return types.VowelTwoCholomMale, true
+				}
+				if typedNext.Dagesh == true && typedNext.Vowel == types.VowelNone {
+					return types.VowelTwoShuruk, true
+				}
+			}
+		}
+		return types.VowelTwoNone, false
+	}
+	return types.VowelTwo(oldVowel), false
+}
+
+// Currently not implemented, will implement once core functionality is complete
+func getEdgeCase(linkedNode *types.LinkedNodeOne) (types.EdgeCase, error) {
+	fmt.Println("Edgecase currently unimplemented")
+	return types.EdgeCaseNone, nil
+}

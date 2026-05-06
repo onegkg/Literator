@@ -41,7 +41,7 @@ func (ln1 *LinkedNodeOne) String() string {
 	return fmt.Sprintf("LN1{ %v }", ln1.Node)
 }
 
-func (ln1 *LinkedNodeOne) DebugPrint() string {
+func (ln1 *LinkedNodeOne) DebugString() string {
 	return fmt.Sprintf("LN1{ Node: %v, Next: %v, Prev: %v}", ln1.Node, ln1.Next, ln1.Prev)
 }
 
