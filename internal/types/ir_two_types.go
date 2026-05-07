@@ -214,12 +214,16 @@ func (pn *PuncNodeTwo) String() string {
 func (pn *PuncNodeTwo) IsNodeTwo() {}
 
 type GodNodeTwo struct {
+	Kind GodType
 }
 
-type GodTypes int
+func (gn *GodNodeTwo) IsNodeTwo() {}
+
+type GodType int
 
 const (
-	YudYud GodTypes = iota
+	GodTypeNone GodType = iota
+	YudYud
 	YudKeyVavKey
-	GodTypesCount
+	GodTypeCount
 )

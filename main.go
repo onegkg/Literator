@@ -23,8 +23,12 @@ func main() {
 		fmt.Printf("Error converting to IR2: %v\n", err)
 		os.Exit(1)
 	}
+	// fmt.Printf("Input:\n%v\n", string(dat))
+	// fmt.Printf("Processed:\n%v\n", processed)
+	// fmt.Printf("IROne:\n%v\n", irOne.StringFromHead())
+	// fmt.Printf("IRTwo:\n%v\n", irTwo.StringFromHead())
 
 	literation := literator.Literate(irTwo)
-	fmt.Printf("%v\n", literation)
+	fmt.Printf("Transliteration:\n%v\n", literation)
 
 }

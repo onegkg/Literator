@@ -9,6 +9,7 @@ This repo is just a snapshot of my current work on the project. At any given poi
 
 TODO:
  - Testing (def integration tests, maybe unit tests too?) 
+ - Add doc comments
  - Refactor (get rid of types folder)
  - Add correct transliteration for god's name
  - Actually fix transliteration
