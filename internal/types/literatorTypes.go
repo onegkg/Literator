@@ -69,3 +69,50 @@ func defaultVowelSounds() map[VowelTwo]string {
 	return m
 }
 
+// <spacey> <yud> <yud> <spacey>
+// <spacey> <yud> <hey> <vav> <hey> <spacey>
+
+func isYud()
+
+func IsGod(head *LinkedNodeTwo) bool {
+	curr := head
+	state := 0
+	for curr != nil {
+		switch state {
+		case 0:
+			if isSpacey(curr.Node) {
+				state = 1
+			} else {
+				return false
+			}
+		case 1:
+			if isYud(curr.Node) {
+				state = 2
+			} else {
+				return false
+			}
+		case 2:
+			if isYud(curr.Node) {
+				state = 3
+			} else if true {
+
+			} else {
+				return false
+			}
+		}
+	}
+}
+
+func isSpacey(node NodeTwo) bool {
+	switch node.(type) {
+	case *SpaceNodeTwo:
+		return true
+	case *PuncNodeTwo:
+		return true
+	default:
+		return false
+	}
+}
+
+func ReplaceGod(head *LinkedNodeTwo) *LinkedNodeTwo {
+}

@@ -35,6 +35,7 @@ func ConvertToIRTwo(irOne *types.LinkedNodeOne) (*types.LinkedNodeTwo, error) {
 		currNodeOne = currNodeOne.Next
 	}
 	linked := linkTwo(slice)
+	godReplaced := replaceGod(linked)
 	return linked, nil
 }
 
@@ -204,4 +205,11 @@ func getVowel(linkedNode *types.LinkedNodeOne) (vowel types.VowelTwo, skipNext b
 func getEdgeCase(linkedNode *types.LinkedNodeOne) (types.EdgeCase, error) {
 	fmt.Println("Edgecase currently unimplemented")
 	return types.EdgeCaseNone, nil
+}
+
+func replaceGod(head *types.LinkedNodeTwo) *types.LinkedNodeTwo {
+	if types.IsGod(head) {
+		// replace with tail
+	}
+	return nil
 }
