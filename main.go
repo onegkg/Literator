@@ -13,16 +13,18 @@ func main() {
 	path := filepath.Join("test.txt")
 	dat, err := os.ReadFile(path)
 	if err != nil {
-		fmt.Printf("Error: %w\n", err)
+		fmt.Printf("Error: %v\n", err)
 		os.Exit(1)
 	}
 	processed := literator.Preprocess(string(dat))
 	irOne := literator.ConvertToIROne(processed)
 	irTwo, err := literator.ConvertToIRTwo(irOne)
 	if err != nil {
-		fmt.Printf("Error converting to IR2: %w\n", err)
+		fmt.Printf("Error converting to IR2: %v\n", err)
 		os.Exit(1)
 	}
-	irString := irTwo.StringFromHead()
-	fmt.Printf("%s\n", irString)
+
+	literation := literator.Literate(irTwo)
+	fmt.Printf("%v\n", literation)
+
 }

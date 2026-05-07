@@ -2,6 +2,7 @@ package literator
 
 import (
 	// "fmt"
+	"fmt"
 	"strings"
 
 	"github.com/onegkg/literator/internal/types"
@@ -16,29 +17,49 @@ func Preprocess(input string) string {
 }
 
 type config struct {
-	Builder *strings.Builder
+	Builder  *strings.Builder
+	Mappings types.Mappings
 }
 
-func Literate(nodes []types.NodeOne) string {
-	var b strings.Builder
+func Literate(head *types.LinkedNodeTwo) string {
+	var sb strings.Builder
 	c := config{
-		Builder: &b,
+		Builder:  &sb,
+		Mappings: types.DefaultMappings(),
 	}
-	for i, node := range nodes {
-		switch n := node.(type) {
-		case *types.GraphemeNodeOne:
-			handleGraphemeNode(&c, nodes, i)
-		case *types.PuncNodeOne:
-			b.WriteRune(n.Punc)
-		case *types.SpaceNodeOne:
-			b.WriteRune(' ')
+	curr := head
+	for curr != nil {
+		switch curr.Node.(type) {
+		case *types.GraphemeNodeTwo:
+			handleGraphemeNode(&c, curr)
+		case *types.PuncNodeTwo:
+			handlePuncNode(&c, curr)
+		case *types.SpaceNodeTwo:
+			handleSpaceNode(&c)
 		}
+		curr = curr.Next
 	}
-	return b.String()
+	return sb.String()
 }
 
-func handleGraphemeNode(c *config, nodes []types.NodeOne, idx int) {
-	// node := nodes[idx].(*types.GraphemeNodeOne)
-	// letter := node.Letter
-	// fmt.Fprintf(c.Builder, "%v", letterSound)
+func handleSpaceNode(c *config) {
+	fmt.Fprint(c.Builder, " ")
+}
+
+func handlePuncNode(c *config, node *types.LinkedNodeTwo) {
+	puncNode := node.Node.(*types.PuncNodeTwo)
+	fmt.Fprintf(c.Builder, "%c", puncNode.Punc)
+}
+
+func handleGraphemeNode(c *config, node *types.LinkedNodeTwo) {
+	graphNode := node.Node.(*types.GraphemeNodeTwo)
+	letterSound, ok := c.Mappings.Letters[graphNode.Letter]
+	if !ok {
+		panic("incomplete letter mapping")
+	}
+	vowelSound, ok := c.Mappings.Vowels[graphNode.Vowel]
+	if !ok {
+		panic("incomplete vowel mapping")
+	}
+	fmt.Fprintf(c.Builder, "%s%s", letterSound, vowelSound)
 }
