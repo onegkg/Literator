@@ -6,6 +6,8 @@ import (
 	"github.com/onegkg/literator/internal/types"
 )
 
+var ec_debug bool = true
+
 func ConvertToIRTwo(irOne *types.LinkedNodeOne) (*types.LinkedNodeTwo, error) {
 	var slice []types.NodeTwo
 	currNodeOne := irOne
@@ -35,7 +37,8 @@ func ConvertToIRTwo(irOne *types.LinkedNodeOne) (*types.LinkedNodeTwo, error) {
 		currNodeOne = currNodeOne.Next
 	}
 	linked := linkTwo(slice)
-	return linked, nil
+	godReplaced := replaceGod(linked)
+	return godReplaced, nil
 }
 
 func newGraphemeNodeTwo(node *types.LinkedNodeOne) (types.GraphemeNodeTwo, bool, error) {
@@ -84,6 +87,13 @@ func linkTwo(slice []types.NodeTwo) *types.LinkedNodeTwo {
 			prev = newNode
 		}
 	}
+	// Add a space node to the end of the list
+	newNode := &types.LinkedNodeTwo{
+		Node: &types.SpaceNodeTwo{},
+		Prev: prev,
+		Next: nil,
+	}
+	prev.Next = newNode
 	return head
 }
 
@@ -181,6 +191,9 @@ func getVowel(linkedNode *types.LinkedNodeOne) (vowel types.VowelTwo, skipNext b
 	}
 
 	if oldVowel == types.VowelNone {
+		if linkedNode.Next == nil {
+			return types.VowelTwoNone, false
+		}
 		next := linkedNode.Next.Node
 		switch typedNext := next.(type) {
 		case *types.SpaceNodeOne:
@@ -202,6 +215,33 @@ func getVowel(linkedNode *types.LinkedNodeOne) (vowel types.VowelTwo, skipNext b
 
 // Currently not implemented, will implement once core functionality is complete
 func getEdgeCase(linkedNode *types.LinkedNodeOne) (types.EdgeCase, error) {
-	fmt.Println("Edgecase currently unimplemented")
+	if ec_debug {
+		ec_debug = false
+		fmt.Println("Edgecase currently unimplemented")
+	}
 	return types.EdgeCaseNone, nil
+}
+
+// Scared of slowdown at higher n's since this is
+func replaceGod(head *types.LinkedNodeTwo) *types.LinkedNodeTwo {
+	curr := head
+	for curr != nil {
+		godType := types.IsGod(curr)
+		if godType != types.GodTypeNone {
+			types.ReplaceGod(curr, godType)
+		}
+		curr = findNextSpace(curr)
+	}
+	return head
+}
+
+func findNextSpace(head *types.LinkedNodeTwo) *types.LinkedNodeTwo {
+	curr := head.Next
+	for curr != nil {
+		if types.IsSpacey(curr.Node) {
+			return curr
+		}
+		curr = curr.Next
+	}
+	return nil
 }

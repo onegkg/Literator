@@ -23,15 +23,15 @@ func ConvertToIROne(input string) *types.LinkedNodeOne {
 			continue
 		}
 
-		var letter types.Letter = types.LetterNone
+		letter := types.LetterNone
 		dagesh := false
-		var vowel types.Vowel = types.VowelNone
-		var dot types.ShinSinDot = types.DotNone
+		vowel := types.VowelNone
+		dot := types.DotNone
 		chirikMale := false
 
 		// Skip invalid characters (non-hebrew characters or misplaced vowels)
 		if !types.IsHebrewLetter(runes[i]) {
-			// TODO: Skip create a punctuation list and only select from those, log the rest
+			// TODO: Create a punctuation list and only select from those, log the rest
 			node := types.PuncNodeOne{
 				Punc: runes[i],
 			}
@@ -41,41 +41,31 @@ func ConvertToIROne(input string) *types.LinkedNodeOne {
 		}
 
 		letter = types.Letter(runes[i])
-		if !incOrReturn(&i, max) {
-			break
-		}
+		notEmpty := incOrReturn(&i, max)
 
-		if types.IsHebrewVowel(runes[i]) {
+		if notEmpty && types.IsHebrewVowel(runes[i]) {
 			vowel = types.Vowel(runes[i])
-			if !incOrReturn(&i, max) {
-				break
-			}
-			if vowel == types.Vowel(types.CHIRIK) {
+			notEmpty = incOrReturn(&i, max)
+			if notEmpty && vowel == types.Vowel(types.CHIRIK) {
 				if runes[i] == rune(types.YUD) {
 					chirikMale = true
-					if !incOrReturn(&i, max) {
-						break
-					}
+					notEmpty = incOrReturn(&i, max)
 				}
 			}
 		}
 
-		if runes[i] == types.DAGESH {
+		if notEmpty && runes[i] == types.DAGESH {
 			dagesh = true
-			if !incOrReturn(&i, max) {
-				break
-			}
+			notEmpty = incOrReturn(&i, max)
 		}
 
-		if types.IsShinDot(runes[i]) {
-			dot = types.DotShin
-			if !incOrReturn(&i, max) {
-				break
-			}
-		} else if types.IsSinDot(runes[i]) {
-			dot = types.DotSin
-			if !incOrReturn(&i, max) {
-				break
+		if notEmpty {
+			if types.IsShinDot(runes[i]) {
+				dot = types.DotShin
+				notEmpty = incOrReturn(&i, max) // technically not necessary, but done for consistency
+			} else if types.IsSinDot(runes[i]) {
+				dot = types.DotSin
+				notEmpty = incOrReturn(&i, max)
 			}
 		}
 
@@ -108,9 +98,6 @@ func linkOne(slice []types.NodeOne) *types.LinkedNodeOne {
 				Prev: prev,
 			}
 			prev.Next = newNode
-			// fmt.Printf("prev.Next is nil: %v\n", prev.Next == nil)
-			// fmt.Printf("prev: %v\n", prev.DebugPrint())
-			// fmt.Printf("newNode: %v\n", newNode.DebugPrint())
 			prev = newNode
 		}
 	}

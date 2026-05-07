@@ -36,10 +36,26 @@ func Literate(head *types.LinkedNodeTwo) string {
 			handlePuncNode(&c, curr)
 		case *types.SpaceNodeTwo:
 			handleSpaceNode(&c)
+		case *types.GodNodeTwo:
+			handleGodNode(&c, curr)
+		default:
+			panic("Inexhaustive handling of Node types in Literate")
 		}
 		curr = curr.Next
 	}
 	return sb.String()
+}
+
+func handleGodNode(c *config, node *types.LinkedNodeTwo) {
+	godType := node.Node.(*types.GodNodeTwo).Kind
+	switch godType {
+	case types.YudYud:
+		fmt.Fprint(c.Builder, "Adonai")
+	case types.YudKeyVavKey:
+		fmt.Fprint(c.Builder, "Adonai")
+	default:
+		panic("Inexhaustive handling of god types in handleGodNode")
+	}
 }
 
 func handleSpaceNode(c *config) {
