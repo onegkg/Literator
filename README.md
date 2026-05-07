@@ -6,3 +6,10 @@ Literator is a Hebrew -> English transliteration engine written in Go. It's simu
 The goal is for this project to serve as the backend for an online transliterator, but we're just focusing on making it work at the moment.
 
 This repo is just a snapshot of my current work on the project. At any given point, until otherwise stated, there is no guarantee that this project will work, or even compile.
+
+TODO:
+ - Testing (def integration tests, maybe unit tests too?) 
+ - Refactor (get rid of types folder)
+ - Add correct transliteration for god's name
+ - Actually fix transliteration
+ - Serve over http
