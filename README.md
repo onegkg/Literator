@@ -11,6 +11,7 @@ This repo is just a snapshot of my current work on the project. At any given poi
  - Testing (def integration tests, maybe unit tests too?) 
  - Create punctuation list
  - Add doc comments
+ - Refactor linked nodes to a true generic linked list
  - Refactor (get rid of types folder)
  - Implement Edgecases
  - Actually fix transliteration
